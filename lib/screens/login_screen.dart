@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../routes/app_routes.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/custom_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,16 +18,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    // Aquí irá la lógica de autenticación (simulada por ahora)
+    // Lógica simulada de autenticación
     if (email == "example@gmail.com" && password == "12345678") {
-      // Acceso concedido
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Inicio de sesión exitoso")),
+        const SnackBar(content: Text("Inicio de sesión exitoso")),
       );
     } else {
-      // Acceso denegado
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Correo o contraseña incorrectos")),
+        const SnackBar(content: Text("Correo o contraseña incorrectos")),
       );
     }
   }
@@ -47,76 +48,25 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 40),
 
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Correo"),
-              ),
-              const SizedBox(height: 5),
-              TextField(
+              CustomTextField(
+                label: "Correo",
+                hintText: "example@gmail.com",
                 controller: _emailController,
-                decoration: InputDecoration(
-                  hintText: "example@gmail.com",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: 12,
-                  ),
-                ),
+                keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 20),
 
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Contraseña"),
-              ),
-              const SizedBox(height: 5),
-              TextField(
+              CustomTextField(
+                label: "Contraseña",
+                hintText: "**********",
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(
-                  hintText: "**********",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: 12,
-                  ),
-                ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-             /* Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    // Navegar a "¿Olvidaste tu contraseña?"
-                  },
-                  child: const Text("¿Olvidaste tu contraseña?"),
-                ),
-              ),*/
-
-              const SizedBox(height: 10),
-
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: _login,
-                  child: const Text(
-                    "Ingresar",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
+              CustomButton(
+                text: "Ingresar",
+                onPressed: _login,
               ),
               const SizedBox(height: 30),
 
@@ -126,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Text("¿No tienes una cuenta? "),
                   GestureDetector(
                     onTap: () {
-                      // Navegar a registro
+                      Navigator.pushNamed(context, AppRoutes.registerStep1);
                     },
                     child: const Text(
                       "Crear Cuenta",
