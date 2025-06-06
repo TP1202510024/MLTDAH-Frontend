@@ -62,8 +62,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _passwordController,
                 obscureText: true,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
+              Align(
+                alignment: Alignment.center,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.forgotPassword);
+                  },
+                  child: const Text("¿Olvidaste tu contraseña?"),
+                ),
+              ),
+
+              const SizedBox(height: 10),
               CustomButton(
                 text: "Ingresar",
                 onPressed: _login,
