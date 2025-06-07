@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   void _login() {
+    Navigator.pushNamed(context, AppRoutes.home);
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -68,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.center,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.forgotPassword);
+                    Navigator.pushNamed(context, AppRoutes.registerStep1);
                   },
                   child: const Text("¿Olvidaste tu contraseña?"),
                 ),
