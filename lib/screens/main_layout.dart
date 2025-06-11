@@ -6,6 +6,7 @@ import 'home/views/home_view.dart';
 import 'home/views/notifications_view.dart';
 import 'home/views/students_view.dart';
 import 'user/edit_profile_view.dart';
+import 'student/add_student_view.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -29,6 +30,7 @@ class MainLayoutState extends State<MainLayout> {
     ConfigView(),
     NotificationsView(),
     EditProfileView(),
+    AddStudentView(),
   ];
 
   @override
@@ -83,6 +85,8 @@ class MainLayoutState extends State<MainLayout> {
         return 'Notificaciones';
       case 4:
         return 'Editar perfil';
+      case 5:
+        return 'Añadir estudiante';
       default:
         return '';
     }

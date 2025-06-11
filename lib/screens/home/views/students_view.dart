@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../main_layout.dart';
 import '../widgets/student_card.dart';
 
 class StudentsView extends StatelessWidget {
@@ -29,7 +30,10 @@ class StudentsView extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             onPressed: () {
-              // TODO: Abrir pantalla de agregar estudiante
+              final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+              mainLayoutState?.setState(() {
+                mainLayoutState.goTo(5);
+              });
             },
             child: const Icon(Icons.add),
           ),
