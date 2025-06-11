@@ -18,7 +18,7 @@ class ConfigView extends StatelessWidget {
           onTap: () {
             final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
             mainLayoutState?.setState(() {
-              mainLayoutState.goTo(4); // Ir a EditProfileView
+              mainLayoutState.goTo(4);
             });
           },
         ),
@@ -35,7 +35,10 @@ class ConfigView extends StatelessWidget {
           title: 'Datos Institucionales',
           subtitle: 'Modifica los datos de la institución',
           onTap: () {
-            // TODO: Navegar a edición de institución
+            final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+            mainLayoutState?.setState(() {
+              mainLayoutState.goTo(6);
+            });
           },
         ),
         ConfigCard(

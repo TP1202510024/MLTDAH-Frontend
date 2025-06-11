@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_app_header.dart';
 import '../widgets/custom_bottom_nav.dart';
+import 'config_menu/edit_institution_view.dart';
 import 'home/views/config_view.dart';
 import 'home/views/home_view.dart';
 import 'home/views/notifications_view.dart';
 import 'home/views/students_view.dart';
-import 'user/edit_profile_view.dart';
+import 'config_menu/edit_profile_view.dart';
 import 'student/add_student_view.dart';
 
 class MainLayout extends StatefulWidget {
@@ -31,6 +32,7 @@ class MainLayoutState extends State<MainLayout> {
     NotificationsView(),
     EditProfileView(),
     AddStudentView(),
+    EditInstitutionView()
   ];
 
   @override
