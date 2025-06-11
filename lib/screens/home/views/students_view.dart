@@ -11,12 +11,18 @@ class StudentsView extends StatelessWidget {
       children: [
         ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          children: const [
+          children: [
             StudentCard(
               name: 'Juan Lopez',
               grade: 'Quinto grado de Primaria',
               age: '10 años',
               imageUrl: 'assets/images/profile1.png',
+              onTap: () {
+                final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+                mainLayoutState?.setState(() {
+                  mainLayoutState.goTo(9); // Ir a EditProfileView
+                });
+              },
             ),
           ],
         ),

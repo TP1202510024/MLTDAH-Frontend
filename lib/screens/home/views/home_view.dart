@@ -19,12 +19,24 @@ class HomeView extends StatelessWidget {
           grade: 'Quinto grado de Primaria',
           age: '10 años',
           imageUrl: 'assets/images/profile1.png',
+          onTap: () {
+            final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+            mainLayoutState?.setState(() {
+              mainLayoutState.goTo(9); // Ir a EditProfileView
+            });
+          },
         ),
         StudentCard(
           name: 'Juan Lopez',
           grade: 'Quinto grado de Primaria',
           age: '10 años',
           imageUrl: 'assets/images/profile1.png',
+          onTap: () {
+            final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+            mainLayoutState?.setState(() {
+              mainLayoutState.goTo(9); // Ir a EditProfileView
+            });
+          },
         ),
         SizedBox(height: 20),
         Text("Notificaciones", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
