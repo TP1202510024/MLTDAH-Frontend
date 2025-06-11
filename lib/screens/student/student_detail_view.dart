@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:mltdah_frontend/screens/student/add_parent_view.dart';
 import '../main_layout.dart';
 
 class StudentDetailView extends StatefulWidget {
@@ -18,15 +17,17 @@ class _StudentDetailViewState extends State<StudentDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
+      body: Padding(
         padding: const EdgeInsets.all(20),
-        children: [
-          _buildHeader(),
-          const SizedBox(height: 20),
-          _buildTabs(),
-          const SizedBox(height: 20),
-          _buildTabContent(),
-        ],
+        child: Column(
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 20),
+            _buildTabs(),
+            const SizedBox(height: 20),
+            Expanded(child: _buildTabContent()), // ← Asegura renderizado correcto
+          ],
+        ),
       ),
     );
   }
@@ -65,13 +66,19 @@ class _StudentDetailViewState extends State<StudentDetailView> {
             ],
           ),
         ),
-        IconButton(onPressed: () {
-          final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
-          mainLayoutState?.setState(() {
-            mainLayoutState.goTo(10);
-          });
-        }, icon: const Icon(Icons.edit)),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+        IconButton(
+          onPressed: () {
+            final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+            mainLayoutState?.setState(() {
+              mainLayoutState.goTo(10);
+            });
+          },
+          icon: const Icon(Icons.edit),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.delete),
+        ),
       ],
     );
   }
@@ -112,7 +119,13 @@ class _StudentDetailViewState extends State<StudentDetailView> {
       case 1:
         return const Center(child: Text("Resultados..."));
       case 2:
-        return const Center(child: Text("Apoderado..."));
+        return AddParentView(
+          onSuccess: () {
+            setState(() {
+              selectedTab = 0;
+            });
+          },
+        );
       default:
         return const SizedBox.shrink();
     }
