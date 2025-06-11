@@ -23,17 +23,17 @@ class _AddTeacherViewState extends State<AddTeacherView> {
   final birthdateController = TextEditingController();
   final _emailController = TextEditingController();
 
-  String selectedGrade = "Quinto grado de Primaria";
+  List<String> selectedGrades = ["5to"];
   String selectedGender = "Hombre";
   File? selectedImage;
 
   final List<String> grades = [
-    "Primer grado de Primaria",
-    "Segundo grado de Primaria",
-    "Tercer grado de Primaria",
-    "Cuarto grado de Primaria",
-    "Quinto grado de Primaria",
-    "Sexto grado de Primaria",
+    "1ro",
+    "2do",
+    "3ro",
+    "4to",
+    "5to",
+    "6to",
   ];
 
   final List<String> _docTypes = ['DNI', 'Carné de Extranjería', 'Pasaporte'];
@@ -45,7 +45,6 @@ class _AddTeacherViewState extends State<AddTeacherView> {
 
   void _submit() {
     print("Estudiante: ${nameController.text} ${lastNameController.text}");
-    print("Grado: $selectedGrade, Género: $selectedGender");
     print("Foto: ${selectedImage?.path}");
     setState(() => currentStep = 1); // Mostrar éxito
   }
@@ -55,6 +54,59 @@ class _AddTeacherViewState extends State<AddTeacherView> {
     mainLayoutState?.setState(() {
       mainLayoutState.goTo(7);
     });
+  }
+
+  void _showGradeSelectionDialog() async {
+    final selected = await showDialog<List<String>>(
+      context: context,
+      builder: (context) {
+        final tempSelected = List<String>.from(selectedGrades);
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Selecciona uno o más grados"),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: grades.map((grade) {
+                    final isSelected = tempSelected.contains(grade);
+                    return CheckboxListTile(
+                      value: isSelected,
+                      title: Text(grade),
+                      onChanged: (checked) {
+                        setState(() {
+                          if (checked == true) {
+                            tempSelected.add(grade);
+                          } else {
+                            tempSelected.remove(grade);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, null),
+                  child: const Text("Cancelar"),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, tempSelected),
+                  child: const Text("Aceptar"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (selected != null) {
+      setState(() {
+        selectedGrades = selected;
+      });
+    }
   }
 
   @override
@@ -76,11 +128,11 @@ class _AddTeacherViewState extends State<AddTeacherView> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: CustomTextField(label: "Nombres", controller: nameController),
+                child: CustomTextField(
+                    label: "Nombres", controller: nameController),
               ),
             ],
           ),
-
           const SizedBox(height: 16),
           CustomTextField(label: "Apellidos", controller: lastNameController),
           const SizedBox(height: 16),
@@ -99,19 +151,19 @@ class _AddTeacherViewState extends State<AddTeacherView> {
           CustomTextField(
               label: "Fecha de Nacimiento", controller: birthdateController),
           const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            value: selectedGrade,
-            items: grades.map((grade) {
-              return DropdownMenuItem(value: grade, child: Text(grade));
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedGrade = value!;
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: "Grado",
-              border: OutlineInputBorder(),
+          GestureDetector(
+            onTap: _showGradeSelectionDialog,
+            child: AbsorbPointer(
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  labelText: "Grados",
+                  border: OutlineInputBorder(),
+                ),
+                controller: TextEditingController(
+                  text: selectedGrades.join(', '),
+                ),
+                readOnly: true,
+              ),
             ),
           ),
           const SizedBox(height: 16),
