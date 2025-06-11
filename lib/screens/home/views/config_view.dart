@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../main_layout.dart';
-import '../widgets/config_card.dart';
+import '../../../widgets/config_card.dart';
 
 class ConfigView extends StatelessWidget {
   const ConfigView({super.key});
@@ -23,14 +23,6 @@ class ConfigView extends StatelessWidget {
           },
         ),
         ConfigCard(
-          icon: Icons.lock_outline,
-          title: 'Cambiar Contraseña',
-          subtitle: 'Actualiza tu contraseña',
-          onTap: () {
-            // TODO: Navegar a cambiar contraseña
-          },
-        ),
-        ConfigCard(
           icon: Icons.school_outlined,
           title: 'Datos Institucionales',
           subtitle: 'Modifica los datos de la institución',
@@ -39,6 +31,25 @@ class ConfigView extends StatelessWidget {
             mainLayoutState?.setState(() {
               mainLayoutState.goTo(6);
             });
+          },
+        ),
+        ConfigCard(
+          icon: Icons.school_outlined,
+          title: 'Personal Docente',
+          subtitle: 'A{ade, modifica o elimina al personal educativo.',
+          onTap: () {
+            final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+            mainLayoutState?.setState(() {
+              mainLayoutState.goTo(7);
+            });
+          },
+        ),
+        ConfigCard(
+          icon: Icons.lock_outline,
+          title: 'Cambiar Contraseña',
+          subtitle: 'Actualiza tu contraseña',
+          onTap: () {
+            // TODO: Navegar a cambiar contraseña
           },
         ),
         ConfigCard(

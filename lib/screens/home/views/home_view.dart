@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../main_layout.dart';
-import '../widgets/config_card.dart';
-import '../widgets/notification_card.dart';
-import '../widgets/student_card.dart';
+import '../../../widgets/config_card.dart';
+import '../../../widgets/notification_card.dart';
+import '../../../widgets/student_card.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});

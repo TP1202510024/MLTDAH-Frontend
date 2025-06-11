@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mltdah_frontend/screens/teacher/add_teacher_view.dart';
 import '../widgets/custom_app_header.dart';
 import '../widgets/custom_bottom_nav.dart';
 import 'config_menu/edit_institution_view.dart';
+import 'teacher/teacher_view.dart';
 import 'home/views/config_view.dart';
 import 'home/views/home_view.dart';
 import 'home/views/notifications_view.dart';
@@ -32,7 +34,9 @@ class MainLayoutState extends State<MainLayout> {
     NotificationsView(),
     EditProfileView(),
     AddStudentView(),
-    EditInstitutionView()
+    EditInstitutionView(),
+    TeacherView(),
+    AddTeacherView(),
   ];
 
   @override
@@ -89,6 +93,12 @@ class MainLayoutState extends State<MainLayout> {
         return 'Editar perfil';
       case 5:
         return 'Añadir estudiante';
+      case 6:
+        return 'Actualizar datos institucionales';
+      case 7:
+        return 'Personal Docente';
+      case 8:
+        return 'Añadir Personal Docente';
       default:
         return '';
     }

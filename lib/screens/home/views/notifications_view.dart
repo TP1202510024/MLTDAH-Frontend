@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/notification_card.dart';
+import '../../../widgets/notification_card.dart';
 
 class NotificationsView extends StatelessWidget {
   const NotificationsView({super.key});

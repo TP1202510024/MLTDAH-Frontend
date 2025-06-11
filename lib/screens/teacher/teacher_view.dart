@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../main_layout.dart';
-import '../../../widgets/student_card.dart';
+import 'package:mltdah_frontend/widgets/teacher_card.dart';
+import '../main_layout.dart';
 
-class StudentsView extends StatelessWidget {
-  const StudentsView({super.key});
+class TeacherView extends StatelessWidget {
+  const TeacherView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class StudentsView extends StatelessWidget {
         ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           children: const [
-            StudentCard(
+            TeacherCard(
               name: 'Juan Lopez',
               grade: 'Quinto grado de Primaria',
               age: '10 años',
@@ -32,7 +32,7 @@ class StudentsView extends StatelessWidget {
             onPressed: () {
               final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
               mainLayoutState?.setState(() {
-                mainLayoutState.goTo(5);
+                mainLayoutState.goTo(8);
               });
             },
             child: const Icon(Icons.add),
