@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../main_layout.dart';
 import '../widgets/config_card.dart';
 
 class ConfigView extends StatelessWidget {
@@ -15,7 +16,10 @@ class ConfigView extends StatelessWidget {
           title: 'Datos Personales',
           subtitle: 'Edita tus datos personales',
           onTap: () {
-            // TODO: Navegar a pantalla de edición de perfil
+            final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+            mainLayoutState?.setState(() {
+              mainLayoutState.goTo(4); // Ir a EditProfileView
+            });
           },
         ),
         ConfigCard(

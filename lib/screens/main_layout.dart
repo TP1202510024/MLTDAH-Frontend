@@ -5,22 +5,30 @@ import 'home/views/config_view.dart';
 import 'home/views/home_view.dart';
 import 'home/views/notifications_view.dart';
 import 'home/views/students_view.dart';
+import 'user/edit_profile_view.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
 
   @override
-  State<MainLayout> createState() => _MainLayoutState();
+  State<MainLayout> createState() => MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout> {
+class MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
+
+  void goTo(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   final List<Widget> _views = const [
     HomeView(),
     StudentsView(),
     ConfigView(),
     NotificationsView(),
+    EditProfileView(),
   ];
 
   @override
@@ -73,6 +81,8 @@ class _MainLayoutState extends State<MainLayout> {
         return 'Configuración';
       case 3:
         return 'Notificaciones';
+      case 4:
+        return 'Editar perfil';
       default:
         return '';
     }

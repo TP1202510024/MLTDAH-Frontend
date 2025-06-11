@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../main_layout.dart';
 import '../widgets/config_card.dart';
 import '../widgets/notification_card.dart';
 import '../widgets/student_card.dart';
@@ -46,7 +46,12 @@ class HomeView extends StatelessWidget {
           icon: Icons.person_outline,
           title: 'Datos Personales',
           subtitle: 'Edita tus datos personales',
-          onTap: () {},
+          onTap: () {
+            final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
+            mainLayoutState?.setState(() {
+              mainLayoutState.goTo(4); // Ir a EditProfileView
+            });
+          },
         ),
       ],
     );
