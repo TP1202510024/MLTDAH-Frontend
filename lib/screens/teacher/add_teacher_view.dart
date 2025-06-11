@@ -15,6 +15,7 @@ class AddTeacherView extends StatefulWidget {
 class _AddTeacherViewState extends State<AddTeacherView> {
   int currentStep = 0;
   String? _selectedDocType;
+  String? _selectedRole;
   final _passwordController = TextEditingController();
   final _docNumberController = TextEditingController();
 
@@ -37,6 +38,7 @@ class _AddTeacherViewState extends State<AddTeacherView> {
   ];
 
   final List<String> _docTypes = ['DNI', 'Carné de Extranjería', 'Pasaporte'];
+  final List<String> _roleTypes = ['Profesor', 'Director', 'Psicólogo'];
   final List<String> genders = [
     "Hombre",
     "Mujer",
@@ -146,6 +148,28 @@ class _AddTeacherViewState extends State<AddTeacherView> {
             hintText: "**********",
             controller: _passwordController,
             obscureText: true,
+          ),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            value: _selectedRole,
+            items: _roleTypes
+                .map((type) => DropdownMenuItem(
+              value: type,
+              child: Text(type),
+            ))
+                .toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedRole = value;
+              });
+            },
+            decoration: InputDecoration(
+              labelText: "Rol",
+              border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+            ),
           ),
           const SizedBox(height: 16),
           CustomTextField(
