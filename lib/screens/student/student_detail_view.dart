@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mltdah_frontend/screens/student/add_parent_view.dart';
+import '../../widgets/question_card.dart';
 import '../main_layout.dart';
+import 'liker_test.dart';
 
 class StudentDetailView extends StatefulWidget {
   const StudentDetailView({super.key});
@@ -11,6 +13,7 @@ class StudentDetailView extends StatefulWidget {
 
 class _StudentDetailViewState extends State<StudentDetailView> {
   int selectedTab = 0;
+  bool showLikertTest = false;
 
   final List<String> tabs = ["Test", "Resultados", "Apoderado"];
 
@@ -23,9 +26,21 @@ class _StudentDetailViewState extends State<StudentDetailView> {
           children: [
             _buildHeader(),
             const SizedBox(height: 20),
-            _buildTabs(),
-            const SizedBox(height: 20),
-            Expanded(child: _buildTabContent()), // ← Asegura renderizado correcto
+            if (!showLikertTest) ...[
+              _buildTabs(),
+              const SizedBox(height: 20),
+              Expanded(child: _buildTabContent()),
+            ] else ...[
+              Expanded(
+                child: LikertTestView(
+                  onFinish: () {
+                    setState(() {
+                      showLikertTest = false;
+                    });
+                  },
+                ),
+              ),
+            ]
           ],
         ),
       ),
@@ -115,7 +130,26 @@ class _StudentDetailViewState extends State<StudentDetailView> {
   Widget _buildTabContent() {
     switch (selectedTab) {
       case 0:
-        return const Center(child: Text("Tests..."));
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            QuestionCard(
+              title: 'Test de Estudiante',
+              subtitle: 'Comenzar el test del estudiante…',
+              onTap: (){
+                setState(() => showLikertTest = true);
+              },
+            ),
+            QuestionCard(
+              title: 'Preguntas para los padres de familia',
+              subtitle: 'Click para visualizar y exportar o enviar por correo.',
+            ),
+            QuestionCard(
+              title: 'Preguntas para los profesores',
+              subtitle: 'Click para visualizar y exportar o enviar por correo.',
+            ),
+          ],
+        );
       case 1:
         return const Center(child: Text("Resultados..."));
       case 2:

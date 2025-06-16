@@ -60,19 +60,42 @@ class _AddStudentViewState extends State<AddStudentView> {
         const SizedBox(height: 16),
 
         if (currentStep == 0) ...[
-          Center(
-            child: ProfilePhotoPicker(
-              onImageSelected: (image) {
-                setState(() {
-                  selectedImage = image;
-                });
-              },
-            ),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center, // ← centrado vertical
+            children: [
+              // Imagen con tamaño fijo
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: ProfilePhotoPicker(
+                  onImageSelected: (image) {
+                    setState(() {
+                      selectedImage = image;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              // Campos apilados verticalmente
+              Expanded(
+                child: Column(
+                  children: [
+                    CustomTextField(
+                      label: "Nombres",
+                      controller: nameController,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      label: "Apellidos",
+                      controller: lastNameController,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          CustomTextField(label: "Nombres", controller: nameController),
-          const SizedBox(height: 16),
-          CustomTextField(label: "Apellidos", controller: lastNameController),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             value: selectedGrade,
