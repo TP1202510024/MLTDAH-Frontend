@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mltdah_frontend/screens/student/add_parent_view.dart';
+import 'package:mltdah_frontend/screens/student/student_results_view.dart';
 import '../../widgets/question_card.dart';
 import '../main_layout.dart';
 import 'liker_test.dart';
@@ -151,7 +152,7 @@ class _StudentDetailViewState extends State<StudentDetailView> {
           ],
         );
       case 1:
-        return const Center(child: Text("Resultados..."));
+        return StudentResultsView();
       case 2:
         return AddParentView(
           onSuccess: () {
