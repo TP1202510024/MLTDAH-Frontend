@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <application
+        android:usesCleartextTraffic="true"
         android:label="mltdah_frontend"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

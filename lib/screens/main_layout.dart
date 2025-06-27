@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mltdah_frontend/screens/student/edit_student_view.dart';
 import 'package:mltdah_frontend/screens/student/student_detail_view.dart';
 import 'package:mltdah_frontend/screens/teacher/add_teacher_view.dart';
+import 'package:mltdah_frontend/screens/teacher/edit_teacher_view.dart';
 import '../widgets/custom_app_header.dart';
 import '../widgets/custom_bottom_nav.dart';
 import 'config_menu/edit_institution_view.dart';
@@ -22,53 +23,40 @@ class MainLayout extends StatefulWidget {
 
 class MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
+  dynamic _extraData;
 
-  void goTo(int index) {
+  void goTo(int index, {dynamic extraData}) {
     setState(() {
       _selectedIndex = index;
+      _extraData = extraData;
     });
   }
 
-  final List<Widget> _views = const [
-    HomeView(),
-    StudentsView(),
-    ConfigView(),
-    NotificationsView(),
-    EditProfileView(),
-    AddStudentView(),
-    EditInstitutionView(),
-    TeacherView(),
-    AddTeacherView(),
-    StudentDetailView(),
-    EditStudentView(),
-  ];
+  Widget _getCurrentView() {
+    switch (_selectedIndex) {
+      case 0: return const HomeView();
+      case 1: return const StudentsView();
+      case 2: return const ConfigView();
+      case 3: return const NotificationsView();
+      case 4: return EditProfileView();
+      case 5: return AddStudentView();
+      case 6: return EditInstitutionView();
+      case 7: return const TeacherView();
+      case 8: return const AddTeacherView();
+      case 9: return StudentDetailView(extraData: _extraData);
+      case 10: return EditStudentView(extraData: _extraData);
+      case 11: return EditTeacherView(extraData: _extraData);
+      default: return const SizedBox.shrink();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          CustomAppHeader(
-            title: _getTitleForIndex(_selectedIndex),
-            onNotificationsTap: () {
-              setState(() {
-                _selectedIndex = 3; // Mostrar notificaciones
-              });
-            },
-            onProfileTap: () {
-              // Ir al perfil
-            },
-            extraRightWidget: _selectedIndex == 1
-                ? IconButton(
-              icon: const Icon(Icons.filter_alt_outlined),
-              onPressed: () {
-                // TODO: Mostrar diálogo o menú de filtros
-              },
-            )
-                : null,
-          ),
           Expanded(
-            child: _views[_selectedIndex],
+            child: _getCurrentView(),
           ),
         ],
       ),
@@ -81,34 +69,5 @@ class MainLayoutState extends State<MainLayout> {
         },
       ),
     );
-  }
-
-  String _getTitleForIndex(int index) {
-    switch (index) {
-      case 0:
-        return 'Inicio';
-      case 1:
-        return 'Estudiantes';
-      case 2:
-        return 'Configuración';
-      case 3:
-        return 'Notificaciones';
-      case 4:
-        return 'Editar perfil';
-      case 5:
-        return 'Añadir estudiante';
-      case 6:
-        return 'Actualizar datos institucionales';
-      case 7:
-        return 'Personal Docente';
-      case 8:
-        return 'Añadir Personal Docente';
-      case 9:
-        return 'Detalle Alumno';
-      case 10:
-        return 'Editar Detalles del Alumno';
-      default:
-        return '';
-    }
   }
 }

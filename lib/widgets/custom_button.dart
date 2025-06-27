@@ -1,32 +1,61 @@
 import 'package:flutter/material.dart';
-
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final bool isLoading;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final Color? loadingColor;
+  final double? width;
+  final double? height;
+  final double borderRadius;
+  final EdgeInsets? padding;
 
   const CustomButton({
     super.key,
     required this.text,
     required this.onPressed,
+    this.isLoading = false,
+    this.backgroundColor = Colors.black,
+    this.textColor = Colors.white,
+    this.loadingColor = Colors.white,
+    this.width = double.infinity,
+    this.height = 50,
+    this.borderRadius = 8,
+    this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      height: 50,
+      width: width,
+      height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
+          backgroundColor: backgroundColor,
+          foregroundColor: textColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
+          disabledBackgroundColor: Colors.grey[600],
+          padding: padding,
         ),
-        onPressed: onPressed,
-        child: Text(
+        onPressed: isLoading ? null : onPressed,
+        child: isLoading
+            ? SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(
+            color: loadingColor,
+            strokeWidth: 3,
+          ),
+        )
+            : Text(
           text,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
         ),
       ),
     );

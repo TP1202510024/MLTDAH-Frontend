@@ -11,29 +11,26 @@ import '../../widgets/profile_photo_picker.dart';
 import '../main_layout.dart';
 import 'dart:io';
 
-class AddTeacherView extends StatefulWidget {
-  const AddTeacherView({super.key});
+class EditTeacherView extends StatefulWidget {
+  final dynamic extraData;
+  const EditTeacherView({super.key, this.extraData});
 
   @override
-  State<AddTeacherView> createState() => _AddTeacherViewState();
+  State<EditTeacherView> createState() => _EditTeacherViewState();
 }
 
-class _AddTeacherViewState extends State<AddTeacherView> {
+class _EditTeacherViewState extends State<EditTeacherView> {
   int currentStep = 0;
   bool _isLoading = true;
   String? _error;
-  List<Map<String, dynamic>> _roleTypes = [];
-  String? _selectedRoleId;
   DateTime? _selectedDate;
 
-  final _passwordController = TextEditingController();
   final _docNumberController = TextEditingController();
   final _birthdateController = TextEditingController();
 
   final nameController = TextEditingController();
   final lastNameController = TextEditingController();
   final birthdateController = TextEditingController();
-  final _emailController = TextEditingController();
   String selectedGender = "Hombre";
   File? selectedImage;
 
@@ -45,38 +42,24 @@ class _AddTeacherViewState extends State<AddTeacherView> {
   }
   Future<void> _loadInitialData() async {
     try {
-      final responses = await Future.wait([
-        _fetchRoles(),
-      ]);
-
       setState(() {
-        debugPrint('Imagen subida exitosamente. ${responses.toString()}');
-        _roleTypes = responses[0];
+        debugPrint('Imagen subida exitosamente. ${widget.extraData.toString()}');
         _isLoading = false;
+        _docNumberController.text = widget.extraData['dni'].toString();
+
+        nameController.text = widget.extraData['firstName'] ?? '';
+        lastNameController.text = widget.extraData['lastName'] ?? '';
+        _selectedDate = DateTime.parse(widget.extraData['birthDate'].toString());
+        _birthdateController.text = DateFormat('dd/MM/yyyy').format(_selectedDate!);
       });
     } catch (e) {
       setState(() {
-        _error = 'Error al cargar datos iniciales: ${e.toString()}';
         _isLoading = false;
       });
       debugPrint('Error en _loadInitialData: $e');
     }
   }
 
-  Future<List<Map<String, dynamic>>> _fetchRoles() async {
-    try {
-      final response = await ApiService.getWithAuth(
-        endpoint: '/api/v1/roles',
-      );
-      return (response as List).map<Map<String, dynamic>>((role) => {
-        'id': role['id'],
-        'name': role['name'].toString()
-      }).toList();
-    } catch (e) {
-      debugPrint('Error cargando roles: $e');
-      return [];
-    }
-  }
   void _goBackToTeachers() {
     final mainLayoutState = context.findAncestorStateOfType<MainLayoutState>();
     mainLayoutState?.setState(() {
@@ -104,10 +87,7 @@ class _AddTeacherViewState extends State<AddTeacherView> {
       nameController.text.isEmpty ? 'Nombres' : null,
       lastNameController.text.isEmpty ? 'Apellidos' : null,
       _docNumberController.text.isEmpty ? 'Número de documento' : null,
-      _emailController.text.isEmpty ? 'Correo electrónico' : null,
-      _passwordController.text.isEmpty ? 'Contraseña' : null,
       _birthdateController.text.isEmpty ? 'Fecha de nacimiento' : null,
-      _selectedRoleId == null ? 'Rol' : null,
     ].whereType<String>().toList();
 
     if (fields.isNotEmpty) {
@@ -117,38 +97,20 @@ class _AddTeacherViewState extends State<AddTeacherView> {
       return;
     }
 
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(_emailController.text)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ingrese un email válido')),
-      );
-      return;
-    }
-
-    if (_passwordController.text.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('La contraseña debe tener al menos 6 caracteres')),
-      );
-      return;
-    }
-
     final prefs = await SharedPreferences.getInstance();
-    final userData = jsonDecode(prefs.getString('user_data') ?? '{}');
 
     if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
-      final result = await ApiService.postWithAuth(
+      final result = await ApiService.putWithAuth(
         endpoint: '/api/v1/users',
+        id: widget.extraData['id']?.toString(),
         body: {
           "firstName": nameController.text.trim(),
           "lastName": lastNameController.text.trim(),
           "dni": _docNumberController.text.trim(),
           "birthDate": _selectedDate!.toIso8601String(),
-          "email": _emailController.text.trim(),
-          "password": _passwordController.text,
-          "institutionId": userData['institution']['id'],
-          "roleId": int.parse(_selectedRoleId!),
         },
       );
 
@@ -164,18 +126,6 @@ class _AddTeacherViewState extends State<AddTeacherView> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
-  }
-  String? _validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Este campo es obligatorio';
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) return 'Correo inválido';
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Este campo es obligatorio';
-    if (value.length < 6) return 'Mínimo 6 caracteres';
-    return null;
   }
 
   @override
@@ -201,7 +151,7 @@ class _AddTeacherViewState extends State<AddTeacherView> {
 
     return Column(children: [
       CustomAppHeader(
-        title: "Añadir Personal Docente",
+        title: "Editar Personal Docente",
         onNotificationsTap: () {
           final mainLayoutState =
           context.findAncestorStateOfType<MainLayoutState>();
@@ -214,8 +164,7 @@ class _AddTeacherViewState extends State<AddTeacherView> {
         },
       ),
       Expanded(
-          child:
-          ListView(
+          child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             children: [
               const SizedBox(height: 16),
@@ -238,23 +187,6 @@ class _AddTeacherViewState extends State<AddTeacherView> {
                   },
                 ),
                 const SizedBox(height: 16),
-                CustomTextField(
-                  label: "Correo",
-                  hintText: "example@gmail.com",
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: _validateEmail,
-                ),
-                const SizedBox(height: 16),
-
-                CustomTextField(
-                  label: "Contraseña",
-                  hintText: "**********",
-                  controller: _passwordController,
-                  obscureText: true,
-                  validator: _validatePassword,
-                ),
-                const SizedBox(height: 16),
                 GestureDetector(
                   onTap: _selectDate,
                   child: AbsorbPointer(
@@ -270,36 +202,7 @@ class _AddTeacherViewState extends State<AddTeacherView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _selectedRoleId, // Ahora usamos _selectedRoleId en lugar de _selectedRole
-                  items: _roleTypes
-                      .map((role) => DropdownMenuItem(
-                    value: role['id'].toString(), // Usamos el ID como valor
-                    child: Text(role['name']), // Mostramos el nombre
-                  ))
-                      .toList(),
-                  onChanged: (String? value) {
-                    debugPrint('Rol seleccionado - ID: $value');
-                    if (value != null) {
-                      setState(() {
-                        _selectedRoleId = value;
-                      });
-                    }
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Rol",
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Seleccione un rol';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 40),
                 CustomButton(text: "Agregar", onPressed: _submit),
               ] else if (currentStep == 1) ...[
                 const SizedBox(height: 40),
@@ -318,7 +221,6 @@ class _AddTeacherViewState extends State<AddTeacherView> {
               ],
             ],
           )
-
       )
     ]);
   }

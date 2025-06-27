@@ -3,7 +3,6 @@ import '../screens/login_screen.dart';
 import '../screens/main_layout.dart';
 import '../screens/register/register_step1.dart';
 import '../screens/register/register_step2.dart';
-import '../screens/register/register_step3.dart';
 import '../screens/register/register_success.dart';
 import '../screens/auth/forgot_password_screen.dart';
 
@@ -21,7 +20,6 @@ class AppRoutes {
     login: (context) => const LoginScreen(),
     registerStep1: (context) => const RegisterStep1(),
     registerStep2: (context) => const RegisterStep2(),
-    registerStep3: (context) => const RegisterStep3(),
     registerSuccess: (context) => const RegisterSuccess(),
     forgotPassword: (context) => const ForgotPasswordScreen(),
     home: (context) => const MainLayout(),

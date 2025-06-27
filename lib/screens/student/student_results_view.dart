@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:mltdah_frontend/screens/student/add_parent_view.dart';
+import 'package:mltdah_frontend/screens/student/student_detail_view.dart';
 import 'package:mltdah_frontend/screens/student/student_result_detail_view.dart';
 import 'package:mltdah_frontend/widgets/test_result_card.dart';
+import '../../services/api_service.dart';
+import '../../utils/utils.dart';
 import '../../widgets/line_chart_card.dart';
 import '../../widgets/question_card.dart';
 import '../main_layout.dart';
 import 'liker_test.dart';
 
 class StudentResultsView extends StatefulWidget {
-  const StudentResultsView({super.key});
+  final dynamic extraData;
+  const StudentResultsView({super.key,this.extraData});
 
   @override
   State<StudentResultsView> createState() => _StudentResultsViewState();
@@ -17,8 +21,51 @@ class StudentResultsView extends StatefulWidget {
 class _StudentResultsViewState extends State<StudentResultsView> {
   int selectedTab = 0;
   bool showResults = false;
+  bool _isLoading = true;
+  String? _error;
+  List<dynamic> _exams = [];
 
   final List<String> tabs = ["Línea de Tiempo", "En Lista"];
+
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.extraData != null && widget.extraData is Map<String, dynamic>) {
+      try {
+        debugPrint('Error entro datos del estudiante:');
+        _fetchStudentsExams(widget.extraData['id'].toString());
+      } catch (e) {
+        debugPrint('Error procesando datos del estudiante: $e');
+      }
+    } else {
+      debugPrint('Datos del estudiante no proporcionados o formato incorrecto');
+    }
+  }
+
+  Future<void> _fetchStudentsExams(String id) async {
+    try {
+      final response = await ApiService.getWithAuth(
+          endpoint: '/api/v1/tests/student', id: id);
+      debugPrint('resultados: $response');
+      if (response is List) {
+        setState(() {
+          _exams = response;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _error = 'Formato de respuesta inesperado';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Error al cargar estudiantes: $e';
+        _isLoading = false;
+      });
+    }
+  }
 
   Future<bool?> showDeleteConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
@@ -113,6 +160,14 @@ class _StudentResultsViewState extends State<StudentResultsView> {
     );
   }
 
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.day}/${date.month}/${date.year} - ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return dateString; // Si hay error al parsear, devolver el string original
+    }
+  }
 
   Widget _buildTabContent() {
     switch (selectedTab) {
@@ -121,39 +176,41 @@ class _StudentResultsViewState extends State<StudentResultsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LineChartCard(
-              values: [95, 75, 80, 80, 80, 75],
-              months: ["Ene", "Feb", "Mar", "Abr", "May", "Jun"],
+              values: _exams.map((e) => (e['probability'] as num).toDouble() * 100).toList(),
+              months: _exams.map((e) {
+                final date = DateTime.parse(e['createdAt']);
+                return '${date.day}/${date.month}';
+              }).toList(),
             ),
-            // Puedes añadir más widgets aquí si lo necesitas
           ],
         );
       case 1:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TestResultCard(
-              title: "Resultado N. 1",
-              date: "15/05/2025 – 10:20 PM",
-              probability: "95% Probabilidad",
-              onTap: () {
-                Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const StudentResultDetailView(),
-                ),
-              );
-
-              },
-              onDelete: () async {
-                final confirm = await showDeleteConfirmationDialog(context);
-                if (confirm == true) {
-                  // Eliminar el resultado aquí
-                  // Por ejemplo: controller.deleteResult(index);
-                }
-              },
-
-            ),
-          ],
+        return ListView.builder(
+          itemCount: _exams.length,
+          itemBuilder: (context, index) {
+            final exam = _exams[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: TestResultCard(
+                title: "Resultado N. ${index + 1}",
+                date: _formatDate(exam['createdAt']),
+                probability: "${((exam?['probability'] ?? 0) * 100).toStringAsFixed(0)}% Probabilidad",
+                //result: exam['result'] == "NO" ? "Negativo" : "Positivo",
+                onTap: () {
+                  final examWithIndex = {...exam, 'index': index}; // Crear una copia con el índice
+                  final parentState = context.findAncestorStateOfType<StudentDetailViewState>();
+                  parentState?.showExamDetail(examWithIndex);
+                },
+                onDelete: () async {
+                  final confirm = await showDeleteConfirmationDialog(context);
+                  if (confirm == true) {
+                    // TODO: Implementar eliminación del examen
+                    // Puedes llamar a una función para eliminar el examen con exam['id']
+                  }
+                },
+              ),
+            );
+          },
         );
       default:
         return const SizedBox.shrink();

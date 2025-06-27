@@ -5,6 +5,7 @@ class TeacherCard extends StatelessWidget {
   final String grade;
   final String age;
   final String imageUrl; // Puede ser local o remota
+  final VoidCallback onTap;
 
   const TeacherCard({
     super.key,
@@ -12,6 +13,7 @@ class TeacherCard extends StatelessWidget {
     required this.grade,
     required this.age,
     required this.imageUrl,
+    required this.onTap,
   });
 
   @override
@@ -22,40 +24,46 @@ class TeacherCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 28,
-              backgroundImage: AssetImage(imageUrl), // Usa NetworkImage si es remoto
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(age + " años + " + grade, style: const TextStyle(color: Colors.grey)),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.blue[100],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                "Profesor",
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+        child: InkWell(
+            onTap: onTap,
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundImage:
+                      AssetImage(imageUrl), // Usa NetworkImage si es remoto
                 ),
-              ),
-            ),
-          ],
-        ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(name,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      Text(age + " años + " + grade,
+                          style: const TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[100],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "Profesor",
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            )),
       ),
     );
   }

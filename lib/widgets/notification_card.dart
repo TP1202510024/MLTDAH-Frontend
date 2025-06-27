@@ -12,13 +12,32 @@ class NotificationCard extends StatelessWidget {
     required this.status,
   });
 
+  bool _isNumericStatus() {
+    return double.tryParse(status) != null;
+  }
+
+  String _getStatusText() {
+    if (_isNumericStatus()) {
+      final numericValue = double.parse(status);
+      return '${(numericValue * 100).toStringAsFixed(0)}% Probabilidad';
+    }
+    return status;
+  }
+
   Color _getStatusColor() {
-    if (status.toLowerCase().contains('generando')) {
-      return Colors.green;
-    } else if (status.toLowerCase().contains('probabilidad')) {
+    if (!_isNumericStatus()) {
+      return Colors.green; // Para textos no numéricos
+    }
+
+    final numericValue = double.parse(status);
+    final percentage = numericValue * 100;
+
+    if (percentage > 80) {
       return Colors.red;
+    } else if (percentage < 20) {
+      return Colors.green;
     } else {
-      return Colors.grey;
+      return Colors.orange;
     }
   }
 
@@ -28,6 +47,9 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final statusText = _getStatusText();
+    final statusColor = _getStatusColor();
+    final statusBackground = _getStatusBackground();
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -48,13 +70,13 @@ class NotificationCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getStatusBackground(),
+                    color: statusBackground,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    status,
+                    statusText,
                     style: TextStyle(
-                      color: _getStatusColor(),
+                      color: statusColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
