@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class ResultSectionCard extends StatelessWidget {
   final String title;
-  final String description;
   final int score;
   final int total;
   final Color badgeColor;
@@ -12,7 +11,6 @@ class ResultSectionCard extends StatelessWidget {
   const ResultSectionCard({
     super.key,
     required this.title,
-    required this.description,
     required this.score,
     required this.total,
     required this.badgeColor,
@@ -53,8 +51,6 @@ class ResultSectionCard extends StatelessWidget {
               )
             ],
           ),
-          const SizedBox(height: 8),
-          Text(description),
           if (warning != null) ...[
             const SizedBox(height: 12),
             Container(

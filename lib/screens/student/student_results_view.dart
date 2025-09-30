@@ -158,14 +158,17 @@ class _StudentResultsViewState extends State<StudentResultsView> {
         ),
       ],
     );
-  }
+  }  
 
   String _formatDate(String dateString) {
     try {
-      final date = DateTime.parse(dateString);
-      return '${date.day}/${date.month}/${date.year} - ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+      final date = DateTime.parse(dateString)
+          .subtract(const Duration(hours: 5)); // 🔹 Resta 5 horas
+
+      return "${date.day}/${date.month}/${date.year} - "
+          "${date.hour}:${date.minute.toString().padLeft(2, '0')}";
     } catch (e) {
-      return dateString; // Si hay error al parsear, devolver el string original
+      return "Fecha no disponible";
     }
   }
 
@@ -189,9 +192,7 @@ class _StudentResultsViewState extends State<StudentResultsView> {
           itemCount: _exams.length,
           itemBuilder: (context, index) {
             final exam = _exams[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: TestResultCard(
+            return  TestResultCard(
                 title: "Resultado N. ${index + 1}",
                 date: _formatDate(exam['createdAt']),
                 probability: "${((exam?['probability'] ?? 0) * 100).toStringAsFixed(0)}% Probabilidad",
@@ -208,8 +209,7 @@ class _StudentResultsViewState extends State<StudentResultsView> {
                     // Puedes llamar a una función para eliminar el examen con exam['id']
                   }
                 },
-              ),
-            );
+              );
           },
         );
       default:

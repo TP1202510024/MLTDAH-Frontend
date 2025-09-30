@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String _baseUrl = 'http://ec2-18-119-143-32.us-east-2.compute.amazonaws.com:8080';
+  static const String _baseUrl = 'http://ec2-18-207-118-50.compute-1.amazonaws.com:8080';
 
   static Future<Map<String, dynamic>> _getUserDataAndToken() async {
     final prefs = await SharedPreferences.getInstance();

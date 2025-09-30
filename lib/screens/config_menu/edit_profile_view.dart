@@ -41,7 +41,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     if (selectedProfileImage == null) return;
 
     final uri = Uri.parse(
-      'http://ec2-18-119-143-32.us-east-2.compute.amazonaws.com:8080/api/v1/users/upload-image?id=$userId',
+      'http://ec2-18-207-118-50.compute-1.amazonaws.com:8080/api/v1/users/upload-image?id=$userId',
     );
 
     final request = http.MultipartRequest('POST', uri)

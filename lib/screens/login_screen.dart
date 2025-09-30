@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     const timeoutDuration = Duration(seconds: 30);
-    final url = Uri.parse("http://ec2-18-119-143-32.us-east-2.compute.amazonaws.com:8080/api/v1/authentication/sign-in");
+    final url = Uri.parse("http://ec2-18-207-118-50.compute-1.amazonaws.com:8080/api/v1/authentication/sign-in");
 
     try {
       final response = await http.post(

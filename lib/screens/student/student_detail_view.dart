@@ -79,7 +79,7 @@ class StudentDetailViewState extends State<StudentDetailView> {
   Widget build(BuildContext context) {
     return Column(children: [
       CustomAppHeader(
-        title: "Detalle Alumno",
+        title: showResults ? "Resultados del Alumno" : "Detalle Alumno",
         onNotificationsTap: () {
           final mainLayoutState =
               context.findAncestorStateOfType<MainLayoutState>();
@@ -185,7 +185,7 @@ class StudentDetailViewState extends State<StudentDetailView> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: (probability < 0.5) ? Colors.green : Colors.red,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -232,7 +232,7 @@ class StudentDetailViewState extends State<StudentDetailView> {
             ],
           ],
         ),
-        if (showResults && probability > 0.8)
+        if (showResults && probability > 0.5)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Container(

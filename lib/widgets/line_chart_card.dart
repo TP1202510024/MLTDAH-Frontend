@@ -21,7 +21,7 @@ class LineChartCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Año 2024", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text("Año 2025", style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             AspectRatio(
               aspectRatio: 1.6,

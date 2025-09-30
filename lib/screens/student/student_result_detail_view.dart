@@ -14,7 +14,8 @@ class StudentResultDetailView extends StatefulWidget {
   });
 
   @override
-  State<StudentResultDetailView> createState() => _StudentResultDetailViewState();
+  State<StudentResultDetailView> createState() =>
+      _StudentResultDetailViewState();
 }
 
 class _StudentResultDetailViewState extends State<StudentResultDetailView> {
@@ -59,7 +60,8 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
 
   void _processExamData() {
     // 1. Extraer fecha de creación
-    final createdAt = widget.examData['createdAt']?.toString() ?? "No disponible";
+    final createdAt =
+        widget.examData['createdAt']?.toString() ?? "No disponible";
     _generationDate = _formatDate(createdAt);
 
     // 2. Procesar respuestas por categoría (excluyendo VC)
@@ -67,8 +69,10 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
     final Map<String, Map<String, dynamic>> categories = {};
 
     for (final answer in answers) {
-      final Map<String, dynamic> question = answer['question'] as Map<String, dynamic>;
-      final Map<String, dynamic> category = question['category'] as Map<String, dynamic>;
+      final Map<String, dynamic> question =
+          answer['question'] as Map<String, dynamic>;
+      final Map<String, dynamic> category =
+          question['category'] as Map<String, dynamic>;
       final String categoryId = category['id'].toString();
       final String categoryName = category['name'].toString();
       final int value = int.tryParse(answer['value'].toString()) ?? 0;
@@ -86,8 +90,10 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
         };
       }
 
-      categories[categoryId]!['totalScore'] = (categories[categoryId]!['totalScore'] as int) + value;
-      categories[categoryId]!['maxPossibleScore'] = (categories[categoryId]!['maxPossibleScore'] as int) + 3;
+      categories[categoryId]!['totalScore'] =
+          (categories[categoryId]!['totalScore'] as int) + value;
+      categories[categoryId]!['maxPossibleScore'] =
+          (categories[categoryId]!['maxPossibleScore'] as int) + 3;
       (categories[categoryId]!['questions'] as List<Map<String, dynamic>>).add({
         'questionText': question['text'].toString(),
         'answerValue': value,
@@ -100,11 +106,21 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
 
   String _formatDate(String dateString) {
     try {
-      final date = DateTime.parse(dateString);
-      return "${date.day}/${date.month}/${date.year} - ${date.hour}:${date.minute.toString().padLeft(2, '0')}";
+      final date = DateTime.parse(dateString)
+          .subtract(const Duration(hours: 5)); // 🔹 Resta 5 horas
+
+      return "${date.day}/${date.month}/${date.year} - "
+          "${date.hour}:${date.minute.toString().padLeft(2, '0')}";
     } catch (e) {
       return "Fecha no disponible";
     }
+  }
+
+  Color _getTextColor(double percentage) {
+    if (percentage >= 0.8) return Colors.white;
+    if (percentage >= 0.6) return Colors.white;
+    if (percentage >= 0.4) return Colors.black;
+    return Colors.white;
   }
 
   Color _getBadgeColor(double percentage) {
@@ -126,15 +142,20 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(0),
-        child: viewstate == 0 ? _buildSummaryView() : _buildCategoryDetailView(),
+        child:
+            viewstate == 0 ? _buildSummaryView() : _buildCategoryDetailView(),
       ),
     );
   }
+
   Widget _buildCategoryDetailView() {
-    if (_selectedCategory == null) return const Center(child: Text("Categoría no encontrada"));
+    if (_selectedCategory == null)
+      return const Center(child: Text("Categoría no encontrada"));
 
     final questions = _selectedCategory!['questions'] as List<dynamic>;
-    final percentage = _selectedCategory!['totalScore'] / _selectedCategory!['maxPossibleScore'];
+    final percentage = _selectedCategory!['totalScore'] /
+        _selectedCategory!['maxPossibleScore'];
+    Color textColor = _getTextColor(percentage);
     final badgeColor = _getBadgeColor(percentage);
 
     return ListView(
@@ -159,9 +180,9 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
                     Text(
                       _selectedCategory!['name'],
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: badgeColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                            color: badgeColor,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -191,15 +212,16 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
                   top: 0,
                   right: 0,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: badgeColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       '${_selectedCategory!['totalScore']}/${_selectedCategory!['maxPossibleScore']}',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: textColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
@@ -227,53 +249,59 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
         const SizedBox(height: 16),
 
         // Lista de preguntas con más padding
-        ...questions.map((question) => Padding(
-          padding: const EdgeInsets.only(bottom: 16), // Más espacio entre preguntas
-          child: Card(
-            elevation: 1,
-            margin: EdgeInsets.zero, // Elimina el margin por defecto
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16), // Más padding interno
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    question['questionText'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
+        ...questions
+            .map((question) => Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 16), // Más espacio entre preguntas
+                  child: Card(
+                    elevation: 1,
+                    margin: EdgeInsets.zero, // Elimina el margin por defecto
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16), // Más padding interno
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            question['questionText'],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.green[
+                                      100], // Verde para todas las respuestas
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  'Respuesta: ${question['answerValue']}',
+                                  style: TextStyle(
+                                    color: Colors.green[800],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.green[100], // Verde para todas las respuestas
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'Respuesta: ${question['answerValue']}',
-                          style: TextStyle(
-                            color: Colors.green[800],
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        )).toList(),
+                ))
+            .toList(),
       ],
     );
   }
+
   Color _getAnswerColor(int value) {
     if (value >= 2) return Colors.red;
     if (value >= 1) return Colors.orange;
@@ -300,7 +328,6 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
             RichText(
               text: TextSpan(
                 style: DefaultTextStyle.of(context).style,
@@ -321,13 +348,13 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
             if (_processedData.isNotEmpty)
               ..._processedData.entries.map((entry) {
                 final category = entry.value;
-                final percentage = category['totalScore'] / category['maxPossibleScore'];
+                final percentage =
+                    category['totalScore'] / category['maxPossibleScore'];
 
                 return GestureDetector(
                   onTap: () => _showCategoryDetail(entry.key),
                   child: ResultSectionCard(
                     title: category['name'],
-                    description: category['description'],
                     score: category['totalScore'],
                     total: category['maxPossibleScore'],
                     badgeColor: _getBadgeColor(percentage),
@@ -338,7 +365,8 @@ class _StudentResultDetailViewState extends State<StudentResultDetailView> {
               }).toList(),
 
             if (_processedData.isEmpty)
-              const Center(child: Text("No hay datos de categorías disponibles")),
+              const Center(
+                  child: Text("No hay datos de categorías disponibles")),
           ],
         ),
       ),

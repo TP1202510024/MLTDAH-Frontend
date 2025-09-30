@@ -66,7 +66,7 @@ class _RegisterStep2State extends State<RegisterStep2> {
     data.creationDate = _selectedDate!.toUtc().toIso8601String();
     try {
       final response = await http.post(
-        Uri.parse("http://ec2-18-119-143-32.us-east-2.compute.amazonaws.com:8080/api/v1/authentication/sign-up"),
+        Uri.parse("http://ec2-18-207-118-50.compute-1.amazonaws.com:8080/api/v1/authentication/sign-up"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data.toJson()),
       );

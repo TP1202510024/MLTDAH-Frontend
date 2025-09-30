@@ -18,6 +18,10 @@ class TestResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String numericPart = probability.split('%').first;
+    final int percentage = int.tryParse(numericPart) ?? 0;
+    final Color containerColor = (percentage < 50) ? Colors.green : Colors.red;
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -59,7 +63,7 @@ class TestResultCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  color: containerColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
