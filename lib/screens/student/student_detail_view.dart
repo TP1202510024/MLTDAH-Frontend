@@ -226,7 +226,7 @@ class StudentDetailViewState extends State<StudentDetailView> {
                 icon: const Icon(Icons.edit),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: _confirmDelete,
                 icon: const Icon(Icons.delete),
               ),
             ],
@@ -330,6 +330,63 @@ class StudentDetailViewState extends State<StudentDetailView> {
         );
       default:
         return const SizedBox.shrink();
+    }
+  }
+
+  Future<void> _confirmDelete() async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar eliminación'),
+          content: const Text(
+            '¿Estás seguro de que deseas eliminar a este estudiante? Esta acción no se puede deshacer.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Eliminar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm != true) {
+      return;
+    }
+
+    try {
+      await ApiService.deleteWithAuth(
+        endpoint: '/api/v1/students',
+        id: widget.extraData['id'].toString(),
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Estudiante eliminado correctamente.'),
+        ),
+      );
+
+      final mainLayoutState =
+          context.findAncestorStateOfType<MainLayoutState>();
+      mainLayoutState?.setState(() {
+        mainLayoutState.goTo(1);
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al eliminar estudiante: $e'),
+        ),
+      );
     }
   }
 }
