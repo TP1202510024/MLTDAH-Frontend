@@ -205,8 +205,49 @@ class _StudentResultsViewState extends State<StudentResultsView> {
                 onDelete: () async {
                   final confirm = await showDeleteConfirmationDialog(context);
                   if (confirm == true) {
-                    // TODO: Implementar eliminación del examen
-                    // Puedes llamar a una función para eliminar el examen con exam['id']
+                    try {
+                      await ApiService.deleteWithAuth(
+                        endpoint: '/api/v1/tests',
+                        id: exam['id'].toString(),
+                      );
+
+                      if (!mounted) return;
+
+                      final studentId = widget.extraData?['id']?.toString();
+
+                      if (studentId == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'No se pudo recargar la lista de exámenes del estudiante.',
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
+                      setState(() {
+                        _isLoading = true;
+                      });
+
+                      await _fetchStudentsExams(studentId);
+
+                      if (!mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Resultado eliminado correctamente.'),
+                        ),
+                      );
+                    } catch (e) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text('Error al eliminar el resultado: ${e.toString()}'),
+                        ),
+                      );
+                    }
                   }
                 },
               );
