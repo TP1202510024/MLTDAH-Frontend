@@ -91,12 +91,35 @@ class _StudentResultsViewState extends State<StudentResultsView> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        body: Center(
+          child: Text(_error!),
+        ),
+      );
+    }
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             if (!showResults) ...[
+              if (_exams.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: Center(
+                    child: Text('Sin resultados aún'),
+                  ),
+                ),
               _buildTabs(),
               const SizedBox(height: 20),
               Expanded(child: _buildTabContent()),
@@ -173,6 +196,12 @@ class _StudentResultsViewState extends State<StudentResultsView> {
   }
 
   Widget _buildTabContent() {
+    if (_exams.isEmpty) {
+      return const Center(
+        child: Text('Sin resultados aún'),
+      );
+    }
+
     switch (selectedTab) {
       case 0:
         return Column(
