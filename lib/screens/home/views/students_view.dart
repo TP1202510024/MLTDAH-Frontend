@@ -14,16 +14,27 @@ class StudentsView extends StatefulWidget {
 }
 
 class _StudentsViewState extends State<StudentsView> {
+  final TextEditingController _searchController = TextEditingController();
   List<dynamic> _students = [];
+  List<dynamic> _filteredStudents = [];
   bool _isLoading = true;
   String? _error;
   List<Map<String, dynamic>> _gradeTypes = [];
   List<Map<String, dynamic>> _genderTypes = [];
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(_onSearchChanged);
     _loadInitialData();
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadInitialData() async {
@@ -49,15 +60,19 @@ class _StudentsViewState extends State<StudentsView> {
       if( role == 'PARENT'){
         final response = await ApiService.getWithAuth(
             endpoint: '/api/v1/parents/parent', id: institutionId);
+        final students = (response as List<dynamic>);
         setState(() {
-          _students = (response as List<dynamic>);
+          _students = students;
+          _filteredStudents = _applyNameFilter(students, _searchQuery);
           _isLoading = false;
         });
       } else{
         final response = await ApiService.getWithAuth(
             endpoint: '/api/v1/students/institution', id: institutionId);
+        final students = (response as List<dynamic>);
         setState(() {
-          _students = (response as List<dynamic>);
+          _students = students;
+          _filteredStudents = _applyNameFilter(students, _searchQuery);
           _isLoading = false;
         });
       }
@@ -99,6 +114,31 @@ class _StudentsViewState extends State<StudentsView> {
     }
   }
 
+  void _onSearchChanged() {
+    final query = _searchController.text;
+    setState(() {
+      _searchQuery = query;
+      _filteredStudents = _applyNameFilter(_students, query);
+    });
+  }
+
+  List<dynamic> _applyNameFilter(List<dynamic> students, String query) {
+    final normalizedQuery = query.trim().toLowerCase();
+    if (normalizedQuery.isEmpty) {
+      return List<dynamic>.from(students);
+    }
+
+    return students.where((student) {
+      final firstName = student['firstName']?.toString().toLowerCase() ?? '';
+      final lastName = student['lastName']?.toString().toLowerCase() ?? '';
+      final fullName = '$firstName $lastName'.trim();
+
+      return firstName.contains(normalizedQuery) ||
+          lastName.contains(normalizedQuery) ||
+          fullName.contains(normalizedQuery);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -121,6 +161,21 @@ class _StudentsViewState extends State<StudentsView> {
           // Ir al perfil
         },
       ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+        child: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.search),
+            hintText: 'Buscar por nombre',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+        ),
+      ),
       Expanded(
           child: Stack(
         children: [
@@ -128,12 +183,15 @@ class _StudentsViewState extends State<StudentsView> {
             const Center(child: CircularProgressIndicator())
           else if (_error != null)
             Center(child: Text(_error!))
+          else if (_filteredStudents.isEmpty && _students.isNotEmpty)
+            const Center(
+                child: Text('No se encontraron estudiantes con ese nombre'))
           else
             ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              itemCount: _students.length,
+              itemCount: _filteredStudents.length,
               itemBuilder: (context, index) {
-                final student = _students[index];
+                final student = _filteredStudents[index];
                 final birthDate = student['birthDate'] as String?;
                 final age = birthDate != null
                     ? '${calculateAge(birthDate)} años'
