@@ -9,12 +9,12 @@ int calculateAge(String birthDate) {
     final today = DateTime.now();
 
     int age = today.year - birthday.year;
-    final monthDifference = today.month - birthday.month;
 
-    if (monthDifference < 0 || (monthDifference == 0 && today.day < birthday.day)) {
+    if (today.month < birthday.month ||
+        (today.month == birthday.month && today.day < birthday.day)) {
       age--;
     }
-
+    
     return age;
   } catch (e) {
     debugPrint('Error calculando edad: $e');
