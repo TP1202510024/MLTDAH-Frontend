@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'routes/app_routes.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final hasSession = prefs.getString('user_data')?.isNotEmpty ?? false;
+
+  runApp(MyApp(initialRoute: hasSession ? AppRoutes.home : AppRoutes.login));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.initialRoute});
+
+  final String initialRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +26,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         fontFamily: 'Roboto',
       ),
-      initialRoute: AppRoutes.login,
+      initialRoute: initialRoute,
       routes: AppRoutes.routes,
     );
   }
